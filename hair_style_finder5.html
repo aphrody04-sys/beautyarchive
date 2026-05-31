@@ -100,6 +100,7 @@ body{font-family:'Nanum Gothic',sans-serif;font-size:16px;line-height:1.9;color:
 .style-img-card img{width:100%;height:140px;object-fit:cover;display:block}
 .style-img-label{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(138,16,96,0.85));color:#fff;font-size:11px;font-weight:700;padding:20px 8px 6px;text-align:center}
 .style-img-card .img-rank{position:absolute;top:6px;left:6px;background:var(--rose);color:#fff;font-size:10px;font-weight:800;padding:2px 7px;border-radius:10px}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 /* 미용실 스크립트 박스 */
 .salon-script{background:linear-gradient(135deg,#3a0a20,#8a1060);border-radius:14px;padding:22px;margin-top:20px;color:#fff}
@@ -542,55 +543,91 @@ function extractStyleNames(text) {
   return names.slice(0, 3);
 }
 
-function showStyleImages(styleNames, vibe) {
+// ★ Pexels API 키를 입력하면 실제 헤어 이미지가 표시됩니다 (https://www.pexels.com/api/ 에서 무료 발급)
+const PEXELS_API_KEY = 'YOUR_PEXELS_KEY_HERE';
+
+// 키워드별 Pexels 큐레이션 이미지 (API 키 없을 때 fallback)
+const HAIR_FALLBACK = {
+  '단발': 'https://images.pexels.com/photos/3065171/pexels-photo-3065171.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '보브':  'https://images.pexels.com/photos/1457794/pexels-photo-1457794.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '레이어드': 'https://images.pexels.com/photos/2076932/pexels-photo-2076932.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '웨이브': 'https://images.pexels.com/photos/1080213/pexels-photo-1080213.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '펌':    'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '롱':    'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '미디엄': 'https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  '히메':  'https://images.pexels.com/photos/1068205/pexels-photo-1068205.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'default0': 'https://images.pexels.com/photos/3065171/pexels-photo-3065171.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'default1': 'https://images.pexels.com/photos/2076932/pexels-photo-2076932.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+  'default2': 'https://images.pexels.com/photos/1080213/pexels-photo-1080213.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
+};
+
+function getFallbackImg(name, idx) {
+  const keys = ['단발','보브','레이어드','웨이브','펌','롱','미디엄','히메'];
+  for (const k of keys) {
+    if (name.includes(k)) return HAIR_FALLBACK[k];
+  }
+  return HAIR_FALLBACK['default' + (idx % 3)];
+}
+
+async function fetchPexelsImage(query) {
+  if (!PEXELS_API_KEY || PEXELS_API_KEY === 'vYmg04BXOHg0E8Qiq5IsoEqTgCWPRB7g40eX3qlkxoo05hjnvH2cgmkf') return null;
+  try {
+    const q = encodeURIComponent(query + ' hairstyle woman korean');
+    const res = await fetch(`https://api.pexels.com/v1/search?query=${q}&per_page=3&orientation=landscape`, {
+      headers: { Authorization: PEXELS_API_KEY }
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.photos?.[0]?.src?.medium || null;
+  } catch { return null; }
+}
+
+async function showStyleImages(styleNames, vibe) {
   const grid = document.getElementById('image-grid');
   const wrap = document.getElementById('style-images');
   grid.innerHTML = '';
   const ranks = ['1순위', '2순위', '3순위'];
 
-  // 헤어스타일 키워드 → Unsplash 큐레이션 이미지 (직접 링크, 안정적)
-  const hairImages = [
-    // 단발/보브 계열
-    {k:['단발','보브','bob'], url:'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop'},
-    {k:['레이어드','layer'], url:'https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?w=400&h=300&fit=crop'},
-    {k:['웨이브','curl','펌'], url:'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=400&h=300&fit=crop'},
-    {k:['롱','long'], url:'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop'},
-    {k:['미디엄','medium','미디'], url:'https://images.unsplash.com/photo-1562322140-8baeececf3df?w=400&h=300&fit=crop'},
-    {k:['히메','姫','공주'], url:'https://images.unsplash.com/photo-1605980413988-9ff24c537935?w=400&h=300&fit=crop'},
-    {k:['투블럭','언더컷'], url:'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=400&h=300&fit=crop'},
-    {k:['앞머리','뱅'], url:'https://images.unsplash.com/photo-1596178060671-7a80dc8059ea?w=400&h=300&fit=crop'},
-  ];
-  const defaultImgs = [
-    'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=400&h=300&fit=crop',
-    'https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=400&h=300&fit=crop',
-  ];
-
-  function findImg(name, idx) {
-    const lower = name.toLowerCase();
-    for (const item of hairImages) {
-      if (item.k.some(k => lower.includes(k))) return item.url;
-    }
-    return defaultImgs[idx % defaultImgs.length];
-  }
-
+  // 로딩 카드 먼저 표시
   styleNames.forEach((name, i) => {
-    const imgUrl = findImg(name, i);
     const card = document.createElement('div');
     card.className = 'style-img-card';
+    card.id = 'imgcard-' + i;
     card.innerHTML = `
       <span class="img-rank">${ranks[i]}</span>
-      <img src="${imgUrl}" alt="${name}" loading="lazy"
-        onerror="this.parentElement.querySelector('.img-placeholder').style.display='flex';this.style.display='none'"
-      />
-      <div class="img-placeholder" style="display:none;width:100%;height:140px;background:#fde8f5;align-items:center;justify-content:center;flex-direction:column;gap:6px">
-        <span style="font-size:28px">✂️</span>
-        <span style="font-size:11px;color:#a02080;font-weight:700">${name}</span>
+      <div class="img-loading" style="width:100%;height:140px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center">
+        <span style="font-size:22px;animation:spin 1.5s linear infinite">✂️</span>
       </div>
       <div class="style-img-label">${name}</div>`;
     grid.appendChild(card);
   });
   wrap.style.display = 'block';
+
+  // 이미지 로드 (Pexels API 또는 fallback)
+  for (let i = 0; i < styleNames.length; i++) {
+    const name = styleNames[i];
+    const card = document.getElementById('imgcard-' + i);
+    if (!card) continue;
+
+    let imgUrl = await fetchPexelsImage(name);
+    if (!imgUrl) imgUrl = getFallbackImg(name, i);
+
+    const loadingEl = card.querySelector('.img-loading');
+    if (loadingEl) {
+      const img = document.createElement('img');
+      img.src = imgUrl;
+      img.alt = name;
+      img.style.cssText = 'width:100%;height:140px;object-fit:cover;display:block';
+      img.onerror = () => {
+        img.style.display = 'none';
+        const ph = document.createElement('div');
+        ph.style.cssText = 'width:100%;height:140px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px';
+        ph.innerHTML = `<span style="font-size:28px">✂️</span><span style="font-size:11px;color:#a02080;font-weight:700">${name}</span>`;
+        loadingEl.replaceWith(ph);
+      };
+      loadingEl.replaceWith(img);
+    }
+  }
 }
 
 function buildPrompt(d) {
@@ -691,7 +728,7 @@ async function callGemini() {
     // 스타일명 추출 → 이미지 표시
     const styleNames = extractStyleNames(text);
     if (styleNames.length > 0) {
-      showStyleImages(styleNames, data.vibe);
+      await showStyleImages(styleNames, data.vibe);
     }
 
     // 마크다운 → HTML 변환
