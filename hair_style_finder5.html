@@ -468,9 +468,9 @@ body{font-family:'Nanum Gothic',sans-serif;font-size:16px;line-height:1.9;color:
       </div>
       <div class="profile-tags" id="res-tags"></div>
       <div id="style-images" style="display:none;margin:16px 0">
-        <div style="font-family:'Nanum Square',sans-serif;font-size:14px;font-weight:800;color:var(--rose-dark);margin-bottom:10px">📸 스타일 분위기 참고 이미지 <span style='font-size:11px;font-weight:400;color:#aaa'>(실제 추천 스타일과 다를 수 있어요)</span></div>
+        <div style="font-family:'Nanum Square',sans-serif;font-size:14px;font-weight:800;color:var(--rose-dark);margin-bottom:10px">✨ AI가 생성한 추천 스타일 이미지 <span style='font-size:11px;font-weight:400;color:#aaa'>(Gemini Imagen으로 생성)</span></div>
         <div id="image-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">📸 분위기 참고용 이미지예요. 아래 카드에서 정확한 스타일 정보를 확인하세요.</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">🤖 AI가 내 정보에 맞게 생성한 참고 이미지예요. 아래 카드에서 정확한 스타일 정보를 확인하세요.</div>
       </div>
       <div class="ai-result-wrap" id="ai-result"></div>
       <div class="action-btns">
@@ -561,62 +561,55 @@ function extractStyleNames(text) {
   return names.slice(0, 3);
 }
 
-// ★ Pexels API 키를 입력하면 실제 헤어 이미지가 표시됩니다 (https://www.pexels.com/api/ 에서 무료 발급)
-const PEXELS_API_KEY = 'YOUR_PEXELS_KEY_HERE';
+// ── Gemini Imagen 이미지 생성 ──
+function buildImagePrompt(styleName, surveyData) {
+  const ageMap = {
+    '20대': '20s', '30대': '30s', '40대': '40s', '50대': '50s', '60대 이상': '60s'
+  };
+  const vibeMap = {
+    '자연스럽고 편안한 느낌': 'natural and relaxed', '도시적이고 세련된': 'chic and urban',
+    '발랄하고 젊은': 'youthful and lively', '우아하고 고급스러운': 'elegant and sophisticated',
+    '개성있고 트렌디한': 'trendy and unique'
+  };
+  const age = ageMap[surveyData.age] || '40s';
+  const vibe = vibeMap[surveyData.vibe] || 'natural';
 
-// 키워드별 Pexels 큐레이션 이미지 (API 키 없을 때 fallback)
-const HAIR_FALLBACK = {
-  '단발': 'https://images.pexels.com/photos/3065171/pexels-photo-3065171.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '보브':  'https://images.pexels.com/photos/1457794/pexels-photo-1457794.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '레이어드': 'https://images.pexels.com/photos/2076932/pexels-photo-2076932.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '웨이브': 'https://images.pexels.com/photos/1080213/pexels-photo-1080213.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '펌':    'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '롱':    'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '미디엄': 'https://images.pexels.com/photos/3065209/pexels-photo-3065209.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  '히메':  'https://images.pexels.com/photos/1068205/pexels-photo-1068205.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  'default0': 'https://images.pexels.com/photos/3065171/pexels-photo-3065171.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  'default1': 'https://images.pexels.com/photos/2076932/pexels-photo-2076932.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-  'default2': 'https://images.pexels.com/photos/1080213/pexels-photo-1080213.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop',
-};
-
-function getFallbackImg(name, idx) {
-  const keys = ['단발','보브','레이어드','웨이브','펌','롱','미디엄','히메'];
-  for (const k of keys) {
-    if (name.includes(k)) return HAIR_FALLBACK[k];
-  }
-  return HAIR_FALLBACK['default' + (idx % 3)];
-}
-
-function toEnglishHairQuery(name) {
-  const map = [
-    ['레이어드','layered haircut'],['단발','bob haircut'],['보브','bob haircut'],
-    ['웨이브','wavy hair'],['펌','permed hair curl'],['롱','long hair'],
-    ['미디엄','medium length hair'],['히메','hime cut'],['히메컷','hime cut'],
-    ['앞머리','bangs hairstyle'],['투블럭','undercut'],['쇼트','short haircut'],
-    ['숏컷','short haircut'],['허쉬컷','curtain bangs'],['울프컷','wolf cut'],
-    ['리프컷','leaf cut'],['C컬','c-curl hairstyle'],['볼륨','volume hair'],
+  const styleMap = [
+    ['레이어드', 'layered cut'], ['단발', 'bob cut'], ['보브', 'bob cut'],
+    ['웨이브', 'wavy curls'], ['펌', 'permed curls'], ['롱', 'long hair'],
+    ['미디엄', 'medium length'], ['히메', 'hime cut'], ['숏컷', 'short pixie cut'],
+    ['울프컷', 'wolf cut'], ['허쉬컷', 'curtain bangs'], ['C컬', 'C-curl blowout'],
+    ['볼륨', 'voluminous blowout'], ['리프컷', 'leaf cut'], ['앞머리', 'bangs']
   ];
-  const lower = name;
-  for (const [k, v] of map) {
-    if (lower.includes(k)) return v + ' asian woman';
+  let engStyle = styleName;
+  for (const [k, v] of styleMap) {
+    if (styleName.includes(k)) { engStyle = v; break; }
   }
-  return name.replace(/[가-힣]/g, '').trim() + ' hairstyle asian woman' || 'korean hairstyle woman';
+
+  return `Studio portrait of an Asian woman in her ${age}, ${vibe} style, showcasing a ${engStyle} hairstyle. Hair is the main focus. Soft studio lighting, clean background, professional hair salon photo quality, photorealistic, high detail.`;
 }
 
-async function fetchPexelsImage(query) {
-  if (!PEXELS_API_KEY || PEXELS_API_KEY === 'YOUR_PEXELS_KEY_HERE') return null;
+async function generateGeminiImage(prompt) {
   try {
-    const q = encodeURIComponent(toEnglishHairQuery(query));
-    const res = await fetch(`https://api.pexels.com/v1/search?query=${q}&per_page=5&orientation=portrait`, {
-      headers: { Authorization: PEXELS_API_KEY }
-    });
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          instances: [{ prompt }],
+          parameters: { sampleCount: 1, aspectRatio: '3:4' }
+        })
+      }
+    );
     if (!res.ok) return null;
     const data = await res.json();
-    return data.photos?.[0]?.src?.medium || null;
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded;
+    return b64 ? `data:image/png;base64,${b64}` : null;
   } catch { return null; }
 }
 
-async function showStyleImages(styleNames, vibe) {
+async function showStyleImages(styleNames, vibe, surveyData) {
   const grid = document.getElementById('image-grid');
   const wrap = document.getElementById('style-images');
   grid.innerHTML = '';
@@ -629,37 +622,38 @@ async function showStyleImages(styleNames, vibe) {
     card.id = 'imgcard-' + i;
     card.innerHTML = `
       <span class="img-rank">${ranks[i]}</span>
-      <div class="img-loading" style="width:100%;height:140px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center">
-        <span style="font-size:22px;animation:spin 1.5s linear infinite">✂️</span>
+      <div class="img-loading" style="width:100%;height:160px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
+        <span style="font-size:24px;animation:spin 1.5s linear infinite;display:inline-block">✂️</span>
+        <span style="font-size:11px;color:#a02080;font-weight:700">AI 이미지 생성 중...</span>
       </div>
       <div class="style-img-label">${name}</div>`;
     grid.appendChild(card);
   });
   wrap.style.display = 'block';
 
-  // 이미지 로드 (Pexels API 또는 fallback)
+  // Gemini Imagen으로 이미지 생성
   for (let i = 0; i < styleNames.length; i++) {
     const name = styleNames[i];
     const card = document.getElementById('imgcard-' + i);
     if (!card) continue;
 
-    let imgUrl = await fetchPexelsImage(name);
-    if (!imgUrl) imgUrl = getFallbackImg(name, i);
-
+    const prompt = buildImagePrompt(name, surveyData);
+    const imgDataUrl = await generateGeminiImage(prompt);
     const loadingEl = card.querySelector('.img-loading');
-    if (loadingEl) {
+    if (!loadingEl) continue;
+
+    if (imgDataUrl) {
       const img = document.createElement('img');
-      img.src = imgUrl;
+      img.src = imgDataUrl;
       img.alt = name;
-      img.style.cssText = 'width:100%;height:120px;object-fit:cover;display:block;filter:brightness(0.95)';
-      img.onerror = () => {
-        img.style.display = 'none';
-        const ph = document.createElement('div');
-        ph.style.cssText = 'width:100%;height:140px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px';
-        ph.innerHTML = `<span style="font-size:28px">✂️</span><span style="font-size:11px;color:#a02080;font-weight:700">${name}</span>`;
-        loadingEl.replaceWith(ph);
-      };
+      img.style.cssText = 'width:100%;height:160px;object-fit:cover;object-position:top;display:block;filter:brightness(0.97)';
       loadingEl.replaceWith(img);
+    } else {
+      // 생성 실패 시 플레이스홀더
+      const ph = document.createElement('div');
+      ph.style.cssText = 'width:100%;height:160px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px';
+      ph.innerHTML = `<span style="font-size:32px">✂️</span><span style="font-size:12px;color:#a02080;font-weight:700">${name}</span>`;
+      loadingEl.replaceWith(ph);
     }
   }
 }
@@ -753,7 +747,7 @@ async function callGemini() {
     // 스타일명 추출 → 이미지 표시
     const styleNames = extractStyleNames(text);
     if (styleNames.length > 0) {
-      await showStyleImages(styleNames, data.vibe);
+      await showStyleImages(styleNames, data.vibe, data);
     }
 
     // 마크다운 → HTML 변환
