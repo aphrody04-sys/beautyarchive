@@ -468,9 +468,8 @@ body{font-family:'Nanum Gothic',sans-serif;font-size:16px;line-height:1.9;color:
       </div>
       <div class="profile-tags" id="res-tags"></div>
       <div id="style-images" style="display:none;margin:16px 0">
-        <div style="font-family:'Nanum Square',sans-serif;font-size:14px;font-weight:800;color:var(--rose-dark);margin-bottom:10px">✨ AI가 생성한 추천 스타일 이미지 <span style='font-size:11px;font-weight:400;color:#aaa'>(Gemini Imagen으로 생성)</span></div>
+        <div style="font-family:'Nanum Square',sans-serif;font-size:14px;font-weight:800;color:var(--rose-dark);margin-bottom:10px">✂️ AI 추천 스타일 TOP 3</div>
         <div id="image-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:8px;text-align:center">🤖 AI가 내 정보에 맞게 생성한 참고 이미지예요. 아래 카드에서 정확한 스타일 정보를 확인하세요.</div>
       </div>
       <div class="ai-result-wrap" id="ai-result"></div>
       <div class="action-btns">
@@ -611,48 +610,26 @@ async function showStyleImages(styleNames, vibe, surveyData) {
   const wrap = document.getElementById('style-images');
   grid.innerHTML = '';
   const ranks = ['1순위', '2순위', '3순위'];
+  const icons = ['✂️', '💇', '🌸'];
+  const colors = [
+    'linear-gradient(135deg,#8a1060,#c040a0)',
+    'linear-gradient(135deg,#6B3550,#a06080)',
+    'linear-gradient(135deg,#5A3060,#8060a0)'
+  ];
 
-  // 로딩 카드 먼저 표시
   styleNames.forEach((name, i) => {
     const card = document.createElement('div');
     card.className = 'style-img-card';
-    card.id = 'imgcard-' + i;
     card.innerHTML = `
       <span class="img-rank">${ranks[i]}</span>
-      <div class="img-loading" style="width:100%;height:160px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px">
-        <span style="font-size:24px;animation:spin 1.5s linear infinite;display:inline-block">✂️</span>
-        <span style="font-size:11px;color:#a02080;font-weight:700">AI 이미지 생성 중...</span>
+      <div style="width:100%;height:160px;background:${colors[i]};display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;padding:16px">
+        <span style="font-size:36px">${icons[i]}</span>
+        <span style="font-size:13px;color:#fff;font-weight:800;text-align:center;line-height:1.5;font-family:'Nanum Square',sans-serif">${name}</span>
       </div>
       <div class="style-img-label">${name}</div>`;
     grid.appendChild(card);
   });
   wrap.style.display = 'block';
-
-  // Gemini Imagen으로 이미지 생성
-  for (let i = 0; i < styleNames.length; i++) {
-    const name = styleNames[i];
-    const card = document.getElementById('imgcard-' + i);
-    if (!card) continue;
-
-    const prompt = buildImagePrompt(name, surveyData);
-    const imgDataUrl = await generateGeminiImage(prompt);
-    const loadingEl = card.querySelector('.img-loading');
-    if (!loadingEl) continue;
-
-    if (imgDataUrl) {
-      const img = document.createElement('img');
-      img.src = imgDataUrl;
-      img.alt = name;
-      img.style.cssText = 'width:100%;height:160px;object-fit:cover;object-position:top;display:block;filter:brightness(0.97)';
-      loadingEl.replaceWith(img);
-    } else {
-      // 생성 실패 시 플레이스홀더
-      const ph = document.createElement('div');
-      ph.style.cssText = 'width:100%;height:160px;background:linear-gradient(135deg,#fde8f5,#f0d0e8);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px';
-      ph.innerHTML = `<span style="font-size:32px">✂️</span><span style="font-size:12px;color:#a02080;font-weight:700">${name}</span>`;
-      loadingEl.replaceWith(ph);
-    }
-  }
 }
 
 function buildPrompt(d) {
