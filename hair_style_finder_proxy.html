@@ -162,6 +162,46 @@ body{font-family:'Nanum Gothic',sans-serif;font-size:16px;line-height:1.9;color:
 
 <div class="container">
 
+  <!-- 용어 설명 박스 -->
+  <div style="margin-bottom:12px">
+    <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.arr').textContent=this.nextElementSibling.style.display==='block'?'▲':'▼'" style="width:100%;background:#fdf0f7;border:1px solid #f0a0d0;border-radius:10px;padding:11px 16px;text-align:left;cursor:pointer;font-size:13px;color:#8a1060;font-weight:700;display:flex;justify-content:space-between;align-items:center;font-family:'Nanum Gothic',sans-serif">
+      📖 헤어 용어가 헷갈리시나요? 여기서 확인하세요 <span class="arr">▼</span>
+    </button>
+    <div style="display:none;border:1px solid #f0a0d0;border-top:none;border-radius:0 0 10px 10px;background:#fff;padding:0 16px 14px">
+      <div style="display:flex;gap:8px;padding:12px 0 8px;flex-wrap:wrap">
+        <button class="term-tab active" onclick="switchTab(this,'curl')" style="padding:5px 14px;border-radius:20px;border:1px solid #f0a0d0;background:#8a1060;color:#fff;font-size:12px;cursor:pointer;font-family:'Nanum Gothic',sans-serif">컬·펌 종류</button>
+        <button class="term-tab" onclick="switchTab(this,'cut')" style="padding:5px 14px;border-radius:20px;border:1px solid #f0a0d0;background:#fff;color:#8a1060;font-size:12px;cursor:pointer;font-family:'Nanum Gothic',sans-serif">컷 스타일</button>
+        <button class="term-tab" onclick="switchTab(this,'bang')" style="padding:5px 14px;border-radius:20px;border:1px solid #f0a0d0;background:#fff;color:#8a1060;font-size:12px;cursor:pointer;font-family:'Nanum Gothic',sans-serif">앞머리 종류</button>
+        <button class="term-tab" onclick="switchTab(this,'length')" style="padding:5px 14px;border-radius:20px;border:1px solid #f0a0d0;background:#fff;color:#8a1060;font-size:12px;cursor:pointer;font-family:'Nanum Gothic',sans-serif">기장(길이)</button>
+      </div>
+      <div id="term-curl" class="term-panel" style="font-size:13px;line-height:2;color:#444">
+        <b style="color:#8a1060">C컬</b> — 머리 끝이 C 모양으로 한 번 말리는 스타일. 단정하고 여성스러운 느낌<br>
+        <b style="color:#8a1060">S컬</b> — 위아래 반대 방향으로 말려 물결 모양. 자연스럽고 풍성한 느낌<br>
+        <b style="color:#8a1060">웨이브펌</b> — 파마 약으로 전체에 물결 굴곡을 만드는 시술<br>
+        <b style="color:#8a1060">모즈펌</b> — 뿌리 볼륨을 살리고 끝만 살짝 말리는 자연스러운 펌<br>
+        <b style="color:#8a1060">엘리자벳펌</b> — 끝부분이 바깥쪽으로 뻗치는 우아한 펌. 도시적인 분위기
+      </div>
+      <div id="term-cut" class="term-panel" style="display:none;font-size:13px;line-height:2;color:#444">
+        <b style="color:#8a1060">레이어드컷</b> — 머리에 층을 내서 가볍고 볼륨 있게 만드는 컷 방식<br>
+        <b style="color:#8a1060">보브컷</b> — 귀 아래~어깨 위 기장의 단발머리<br>
+        <b style="color:#8a1060">픽시컷</b> — 귀가 보일 정도로 짧은 숏컷. 시크하고 도시적인 분위기<br>
+        <b style="color:#8a1060">허쉬컷</b> — 불규칙하게 층을 내 자연스럽고 개성 있는 텍스처컷
+      </div>
+      <div id="term-bang" class="term-panel" style="display:none;font-size:13px;line-height:2;color:#444">
+        <b style="color:#8a1060">풀뱅</b> — 이마를 완전히 덮는 두꺼운 앞머리. 동안 느낌, 넓은 이마 커버<br>
+        <b style="color:#8a1060">시스루뱅</b> — 이마가 살짝 비치는 얇은 앞머리. 답답하지 않고 세련된 느낌<br>
+        <b style="color:#8a1060">사이드뱅</b> — 한쪽으로 자연스럽게 넘기는 앞머리. 얼굴 길이 분할 효과<br>
+        <b style="color:#8a1060">앞머리 없음</b> — 이마를 완전히 드러내는 스타일. 시원하고 세련된 느낌
+      </div>
+      <div id="term-length" class="term-panel" style="display:none;font-size:13px;line-height:2;color:#444">
+        <b style="color:#8a1060">숏 / 단발</b> — 귀 아래~턱선까지의 짧은 기장<br>
+        <b style="color:#8a1060">미디엄 / 중단발</b> — 턱선 아래~쇄골 사이 기장. 가장 활용도 높음<br>
+        <b style="color:#8a1060">세미롱</b> — 쇄골~가슴 사이 기장<br>
+        <b style="color:#8a1060">롱 / 장발</b> — 가슴 아래로 내려오는 긴 기장
+      </div>
+    </div>
+  </div>
+
   <!-- Progress -->
   <div class="progress-wrap">
     <div class="progress-label">
@@ -821,8 +861,8 @@ function renderMarkdown(text) {
         </div>
         <div class="style-card-body">
           ${card.reason ? `<div class="style-card-reason">💬 ${card.reason}</div>` : ''}
-          ${card.details ? `<div class="style-card-info"><div class="sci-label">✂️ 길이·시술</div><div class="sci-value">${card.details}</div></div>` : ''}
-          ${card.difficulty ? `<div class="style-card-info"><div class="sci-label">⚡ 관리 난이도</div><div class="sci-value">${card.difficulty}</div></div>` : ''}
+          ${card.details ? `<div class="style-card-info"><div class="sci-label">길이·시술</div><div class="sci-value">${card.details}</div></div>` : ''}
+
           ${card.tip ? `<div class="style-card-tip">🗣️ "${card.tip}"</div>` : ''}
         </div>
       </div>`;
@@ -860,10 +900,17 @@ function renderMarkdown(text) {
 }
 
 function copyResult() {
-  const tags = document.getElementById('res-tags').innerText;
-  const result = document.getElementById('ai-result').innerText;
-  const text = `[ 나만의 헤어스타일 처방전 — The Beauty Archive ]\n\n▣ 내 프로필\n${tags}\n\n${result}\n\n※ AI 분석 기반 참고 자료입니다.`;
-  navigator.clipboard.writeText(text).then(()=>alert('처방전이 복사됐어요! 🌸 미용실에서 활용해 보세요')).catch(()=>alert('직접 드래그해서 복사해 주세요'));
+  const tags = document.getElementById('res-tags').innerText.replace(/\n/g,' ');
+  const raw = document.getElementById('ai-result').innerText;
+  // 이모티콘 제거 및 정리
+  const clean = raw
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu, '')
+    .replace(/[✂️💬🗣️⚠️💡🧴💨🪞💆✨✦🌸]/g, '')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+  const text = `[ 나만의 헤어스타일 처방전 — The Beauty Archive ]\n\n내 프로필: ${tags}\n\n${clean}\n\n※ AI 분석 기반 참고 자료입니다. 전문 헤어 디자이너 상담을 함께 권장해요.`;
+  navigator.clipboard.writeText(text).then(()=>alert('처방전이 복사됐어요! 미용실에서 활용해 보세요')).catch(()=>alert('직접 드래그해서 복사해 주세요'));
 }
 
 function resetSurvey() {
@@ -882,6 +929,17 @@ function resetSurvey() {
   document.querySelector('.progress-wrap').style.display='block';
   updateProgress(1);
   window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function switchTab(btn, id) {
+  document.querySelectorAll('.term-tab').forEach(b => {
+    b.style.background = '#fff';
+    b.style.color = '#8a1060';
+  });
+  btn.style.background = '#8a1060';
+  btn.style.color = '#fff';
+  document.querySelectorAll('.term-panel').forEach(p => p.style.display = 'none');
+  document.getElementById('term-' + id).style.display = 'block';
 }
 </script>
 </body>
