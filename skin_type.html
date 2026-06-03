@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)http://127.0.0.1:8765/skin_type_blog_inline_quiz.html -->
+<html lang="ko"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>피부타입 맞춤 관리 리포트 | The Beauty Archive</title>
+<link href="./The Beauty Archive_files/css2" rel="stylesheet">
+<style>
+:root{
+  --rose:#9B4F63;
+  --rose-light:#F7EDF1;
+  --rose-mid:#D4A0B0;
+  --rose-dark:#7E3E52;
+  --gold:#B8935A;
+  --gold-light:#E8D5A8;
+  --ivory:#FDFAF7;
+  --cream:#F5EFE4;
+  --brown:#2D1F1F;
+  --muted:#8B7B78;
+  --border:#EDE0D8;
+  --green:#4D7C65;
+  --orange:#B66B3E;
+  --radius:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"Noto Sans KR",sans-serif;background:var(--ivory);color:var(--brown);min-height:100vh;font-size:16px;line-height:1.55}
+.header{position:relative;min-height:168px;overflow:hidden;background:
+  radial-gradient(circle at 18% 18%,rgba(232,213,168,.55),transparent 28%),
+  linear-gradient(135deg,#5E2E40 0%,#9B4F63 54%,#B8935A 100%)}
+.header::after{content:"";position:absolute;inset:0;background:
+  linear-gradient(90deg,rgba(253,250,247,.08),rgba(45,31,31,.18)),
+  repeating-linear-gradient(115deg,rgba(255,255,255,.08) 0 1px,transparent 1px 18px)}
+.header-overlay{position:relative;z-index:1;min-height:168px;display:flex;align-items:center;padding:24px 22px;gap:16px}
+.header-left{width:120px;flex:0 0 120px;text-align:center}
+.logo-mark{width:52px;height:52px;border-radius:50%;margin:0 auto 6px;border:1.5px solid var(--gold-light);display:grid;place-items:center;color:var(--gold-light);font-family:"Cormorant Garamond",serif;font-size:25px;background:rgba(45,31,31,.2)}
+.header-brand{font-family:"Cormorant Garamond",serif;font-size:11px;color:var(--gold-light);letter-spacing:1.4px;line-height:1.3}
+.header-center{flex:1;text-align:center}
+.header-title{font-family:"Noto Serif KR",serif;font-size:27px;font-weight:600;color:#fff;letter-spacing:1px;text-shadow:0 1px 10px rgba(45,31,31,.45)}
+.header-sub{font-size:12px;color:rgba(255,255,255,.82);letter-spacing:3px;margin-top:6px}
+.header-right{width:120px;flex:0 0 120px}
+.container{max-width:760px;margin:0 auto;padding:24px 20px 96px}
+.intro-card,.survey-card,.report-card{background:#fff;border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 6px 24px rgba(155,79,99,.06)}
+.intro-card{padding:28px 26px;margin-bottom:22px;text-align:center}
+.intro-label{font-family:"Cormorant Garamond",serif;color:var(--gold);font-size:12px;letter-spacing:3px;margin-bottom:8px}
+.intro-title{font-family:"Noto Serif KR",serif;font-size:23px;font-weight:600;color:var(--rose-dark);margin-bottom:10px}
+.intro-desc{font-size:14.5px;color:var(--muted);line-height:1.85}
+.axis-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:20px}
+.axis-item{background:var(--rose-light);border-radius:9px;padding:11px 13px;text-align:left}
+.axis-label{font-family:"Cormorant Garamond",serif;color:var(--gold);font-weight:600;font-size:12px;letter-spacing:1.5px;margin-bottom:2px}
+.axis-desc{font-size:13px;color:var(--brown);font-weight:500}
+.btn-start,.btn-nav,.btn-copy,.btn-reset{font-family:"Noto Sans KR",sans-serif;cursor:pointer;transition:background .2s,border-color .2s,opacity .2s}
+.btn-start{width:100%;margin-top:22px;padding:16px;border:0;border-radius:10px;background:linear-gradient(135deg,var(--rose-dark),var(--rose));color:#fff;font-size:16px;font-weight:700;letter-spacing:.5px}
+.btn-start:hover{opacity:.92}
+.progress-wrap{display:none;margin-bottom:18px}
+.progress-label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;margin-bottom:7px}
+.progress-bar-container{height:5px;background:var(--rose-light);border-radius:999px;overflow:hidden}
+.progress-bar-fill{height:100%;width:0;background:linear-gradient(to right,var(--rose-mid),var(--rose));transition:width .3s ease}
+.survey-card{display:none;padding:26px 24px;margin-bottom:20px}
+.step-container{display:none}
+.step-container.active{display:block}
+.survey-section-title{font-family:"Noto Serif KR",serif;font-size:18px;color:var(--rose-dark);margin-bottom:16px;padding-bottom:11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.step-num{font-family:"Cormorant Garamond",serif;font-size:27px;font-weight:600;color:var(--gold)}
+.question-hint{font-size:12.5px;color:var(--muted);background:var(--cream);border-left:3px solid var(--gold-light);border-radius:7px;padding:9px 12px;margin-bottom:14px;line-height:1.7}
+.radio-group{display:flex;flex-direction:column;gap:10px}
+.radio-label{display:flex;align-items:flex-start;padding:14px 16px;background:var(--ivory);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:all .2s;font-size:14px}
+.radio-label:hover{background:var(--rose-light);border-color:var(--rose-mid)}
+.radio-label:has(input:checked){background:var(--rose-light);border-color:var(--rose)}
+.radio-label input{margin-top:3px;margin-right:12px;accent-color:var(--rose);flex-shrink:0}
+.btn-title{display:block;color:var(--rose-dark);font-weight:700;margin-bottom:2px}
+.btn-desc{display:block;color:var(--muted);font-size:13px;line-height:1.6}
+.nav-buttons{display:none;gap:12px;margin-top:16px}
+.btn-nav{flex:1;padding:14px;border-radius:9px;font-size:15px;font-weight:600;border:1px solid var(--border);background:#fff;color:var(--brown)}
+.btn-nav:hover{background:var(--cream)}
+.btn-nav.btn-next{background:var(--rose);border:0;color:#fff}
+.btn-nav.btn-next:hover{background:var(--rose-dark)}
+.btn-nav:disabled{background:#eee;color:#aaa;cursor:not-allowed}
+#result-container{display:none;margin-top:22px}
+.report-card{padding:30px 24px}
+.report-header{text-align:center;margin-bottom:22px;padding-bottom:17px;border-bottom:2px solid var(--rose-light)}
+.report-tag{font-family:"Cormorant Garamond",serif;font-size:12px;letter-spacing:3px;color:var(--gold);margin-bottom:6px}
+.result-code{font-family:"Cormorant Garamond",serif;font-size:44px;color:var(--rose-dark);letter-spacing:4px;line-height:1;font-weight:600}
+.report-title{font-family:"Noto Serif KR",serif;font-size:21px;font-weight:600;color:var(--rose-dark);margin-top:6px}
+.result-summary{margin-top:10px;color:#5f4c4a;font-size:14.5px;line-height:1.85}
+.profile-tags{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px;justify-content:center}
+.profile-tag{font-size:12px;padding:5px 12px;border-radius:999px;background:#fff;border:1px solid var(--rose-mid);color:var(--rose-dark);font-weight:600}
+.report-section{margin-top:18px;border:1px solid var(--border);border-radius:10px;overflow:hidden;background:#fff}
+.section-head{padding:12px 16px;background:var(--rose-light);border-bottom:1px solid var(--border)}
+.section-label{font-family:"Cormorant Garamond",serif;font-size:11px;letter-spacing:2.5px;color:var(--gold);font-weight:600;margin-bottom:2px}
+.section-title{font-family:"Noto Serif KR",serif;color:var(--rose-dark);font-size:17px;font-weight:600}
+.section-body{padding:16px}
+.ingredient-grid,.routine-grid,.care-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ingredient-box{border:1px solid var(--border);border-radius:9px;padding:14px;background:var(--ivory)}
+.ingredient-box.good{border-color:rgba(77,124,101,.35);background:#F4FBF7}
+.ingredient-box.bad{border-color:rgba(182,107,62,.35);background:#FFF8F0}
+.ingredient-box-title{font-weight:700;font-size:14px;margin-bottom:8px}
+.ingredient-box.good .ingredient-box-title{color:var(--green)}
+.ingredient-box.bad .ingredient-box-title{color:var(--orange)}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{display:inline-flex;align-items:center;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#fff;border:1px solid var(--border);line-height:1.35}
+.good .chip{color:var(--green);border-color:rgba(77,124,101,.28)}
+.bad .chip{color:var(--orange);border-color:rgba(182,107,62,.28)}
+.detail-list{display:grid;gap:9px}
+.detail-item{font-size:14px;color:#51413f;line-height:1.75;background:var(--ivory);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.detail-item strong{color:var(--rose-dark)}
+.routine-box{border:1px solid var(--border);border-radius:9px;padding:14px;background:var(--ivory)}
+.routine-time{font-family:"Cormorant Garamond",serif;letter-spacing:2px;color:var(--gold);font-weight:600;font-size:12px;margin-bottom:8px}
+.routine-box ol{padding-left:20px;color:#4d3b39;font-size:13.5px;line-height:1.85}
+.care-card{border:1px solid var(--border);background:var(--ivory);border-radius:9px;padding:14px}
+.care-card-title{font-weight:700;color:var(--rose-dark);margin-bottom:6px}
+.care-card p{font-size:13.5px;color:#5a4a47;line-height:1.75}
+.caution-box{background:#FFF8F0;border:1px solid #F0C080;border-radius:9px;padding:14px 16px;color:#7A5020;font-size:13px;line-height:1.8}
+.action-row{display:flex;gap:10px;margin-top:18px}
+.btn-copy,.btn-reset{flex:1;padding:14px;border-radius:9px;font-size:14px;font-weight:700}
+.btn-copy{background:var(--rose);border:0;color:#fff}
+.btn-reset{background:#fff;border:1px solid var(--border);color:var(--muted)}
+.footer-note{text-align:center;color:var(--muted);font-size:12px;line-height:1.7;margin-top:20px}
+@media(max-width:640px){
+  .header-overlay{display:block;text-align:center;padding:24px 18px}
+  .header-left,.header-right{width:auto}
+  .header-center{margin-top:10px}
+  .header-title{font-size:22px}
+  .container{padding:20px 16px 80px}
+  .intro-card,.survey-card,.report-card{padding:22px 18px}
+  .axis-grid,.ingredient-grid,.routine-grid,.care-grid{grid-template-columns:1fr}
+  .action-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-overlay">
+    <div class="header-left">
+      <div class="logo-mark">B</div>
+      <div class="header-brand">THE<br>BEAUTY ARCHIVE</div>
+    </div>
+    <div class="header-center">
+      <div class="header-title">피부타입 맞춤 관리 리포트</div>
+      <div class="header-sub">SKIN TYPE CARE GUIDE</div>
+    </div>
+    <div class="header-right"></div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="intro-card" id="intro-section">
+    <div class="intro-label">SELF CHECK</div>
+    <h1 class="intro-title">내 피부가 지금 원하는 성분과 관리법</h1>
+    <p class="intro-desc">
+      세안 후 당김, 오후 번들거림, 붉어짐, 잡티, 잔주름까지 8문항으로 확인해보세요.
+      결과에서는 필요한 성분과 피해야 할 성분을 강조하고, 아침·저녁 루틴과 주간 관리법을 정리해드립니다.
+    </p>
+    <div class="axis-grid">
+      <div class="axis-item"><div class="axis-label">D / O</div><div class="axis-desc">건조형 또는 유분형</div></div>
+      <div class="axis-item"><div class="axis-label">S / R</div><div class="axis-desc">민감형 또는 저항형</div></div>
+      <div class="axis-item"><div class="axis-label">P / N</div><div class="axis-desc">색소형 또는 맑음형</div></div>
+      <div class="axis-item"><div class="axis-label">W / T</div><div class="axis-desc">주름형 또는 탄탄형</div></div>
+    </div>
+    <button class="btn-start" type="button" onclick="startQuiz()">피부타입 검사 시작하기</button>
+  </section>
+
+  <div class="progress-wrap" id="progress-wrap">
+    <div class="progress-label"><span id="progress-text">Step 1 / 8</span><span id="progress-pct">0%</span></div>
+    <div class="progress-bar-container"><div class="progress-bar-fill" id="progress-bar"></div></div>
+  </div>
+
+  <section class="survey-card" id="quiz-section">
+    <div id="step-1" class="step-container"></div>
+    <div class="nav-buttons" id="nav-buttons">
+      <button class="btn-nav" id="btn-prev" type="button" onclick="prevStep()">이전</button>
+      <button class="btn-nav btn-next" id="btn-next" type="button" onclick="nextStep()" disabled="">다음</button>
+    </div>
+  </section>
+
+  <section id="result-container"></section>
+</main>
+
+<script>
+const QUESTIONS = [
+  {
+    axis: "oil",
+    title: "세안 후 피부 느낌",
+    hint: "세안 후 20~30분 동안 아무것도 바르지 않았을 때를 떠올려보세요.",
+    q: "내 피부는 세안 후 어떤 쪽에 더 가깝나요?",
+    options: [
+      { value: "D2", title: "금방 당기고 볼·입가가 건조하다", desc: "각질, 들뜸, 푸석함이 자주 보인다." },
+      { value: "D1", title: "볼은 건조하고 T존만 조금 번들거린다", desc: "복합성이지만 건조감이 더 크게 느껴진다." },
+      { value: "O1", title: "시간이 지나면 T존이 번들거린다", desc: "당김보다 피지와 모공이 더 신경 쓰인다." },
+      { value: "O2", title: "전체적으로 유분이 빨리 올라온다", desc: "오후에는 번들거림과 화장 무너짐이 뚜렷하다." }
+    ]
+  },
+  {
+    axis: "oil",
+    title: "오후 피부 상태",
+    hint: "점심 이후 거울을 봤을 때 가장 자주 보이는 상태를 고르세요.",
+    q: "오후의 피부 컨디션은?",
+    options: [
+      { value: "D2", title: "화장이 들뜨거나 잔각질이 보인다", desc: "수분크림을 발라도 건조함이 빨리 돌아온다." },
+      { value: "D1", title: "볼은 당기고 코만 번들거린다", desc: "수분 부족형 복합 피부에 가깝다." },
+      { value: "O1", title: "코와 이마가 번들거린다", desc: "피지는 있지만 심한 트러블은 매일 있지는 않다." },
+      { value: "O2", title: "피지, 모공, 번들거림이 가장 큰 고민이다", desc: "산뜻한 제품을 써도 금방 무거워진다." }
+    ]
+  },
+  {
+    axis: "sensitivity",
+    title: "민감 반응",
+    hint: "새 제품, 마스크 마찰, 미세먼지, 계절 변화에 대한 반응을 봅니다.",
+    q: "피부가 자극에 반응하는 정도는?",
+    options: [
+      { value: "S2", title: "쉽게 붉어지고 따갑거나 가렵다", desc: "새 제품은 테스트 없이 쓰기 어렵다." },
+      { value: "S1", title: "컨디션이 안 좋을 때 예민해진다", desc: "피부가 흔들리는 시기가 반복된다." },
+      { value: "R1", title: "대체로 무난하게 적응한다", desc: "가끔 트러블은 있지만 금방 회복된다." },
+      { value: "R2", title: "강한 제품도 큰 반응은 적다", desc: "붉어짐이나 따가움이 흔하지 않다." }
+    ]
+  },
+  {
+    axis: "sensitivity",
+    title: "장벽 안정감",
+    hint: "피부가 쉽게 무너지는지, 회복이 빠른지 확인합니다.",
+    q: "피부 장벽은 어떤 편인가요?",
+    options: [
+      { value: "S2", title: "온도 변화나 마찰에도 쉽게 붉어진다", desc: "피부가 얇고 예민하다는 말을 자주 듣는다." },
+      { value: "S1", title: "가끔 따갑고 화끈거릴 때가 있다", desc: "과한 각질 제거 후 특히 흔들린다." },
+      { value: "R1", title: "일시적으로 흔들려도 회복이 빠르다", desc: "기본 루틴만 지켜도 안정된다." },
+      { value: "R2", title: "자극 반응이 거의 없는 편이다", desc: "피부가 비교적 튼튼하고 안정적이다." }
+    ]
+  },
+  {
+    axis: "pigment",
+    title: "잡티와 색소",
+    hint: "햇빛, 여드름 자국, 기미, 칙칙함에 대한 고민을 봅니다.",
+    q: "색소 고민은 어느 정도인가요?",
+    options: [
+      { value: "P2", title: "기미, 잡티, 자국이 오래 남는다", desc: "햇빛을 받으면 피부톤이 쉽게 칙칙해진다." },
+      { value: "P1", title: "여드름 자국이나 얼룩덜룩함이 신경 쓰인다", desc: "톤을 맑게 하는 관리가 필요하다." },
+      { value: "N1", title: "색소보다는 붉은기나 결이 더 고민이다", desc: "잡티가 크게 늘어나는 편은 아니다." },
+      { value: "N2", title: "색소 고민은 크지 않다", desc: "피부톤은 비교적 균일한 편이다." }
+    ]
+  },
+  {
+    axis: "pigment",
+    title: "자외선 후 변화",
+    hint: "외출 후 피부가 어떻게 남는지 떠올려보세요.",
+    q: "자외선을 받은 뒤 피부는?",
+    options: [
+      { value: "P2", title: "갈색 자국이나 잡티가 오래 남는다", desc: "선크림을 빼먹으면 금방 티가 난다." },
+      { value: "P1", title: "전체적으로 칙칙해지고 톤이 어두워진다", desc: "브라이트닝 루틴이 필요하다." },
+      { value: "N1", title: "붉어졌다가 비교적 금방 돌아온다", desc: "색소보다 열감과 진정이 중요하다." },
+      { value: "N2", title: "특별한 색소 변화가 적다", desc: "잡티보다 보습·결·모공이 더 신경 쓰인다." }
+    ]
+  },
+  {
+    axis: "aging",
+    title: "탄력과 주름",
+    hint: "눈가, 입가, 팔자, 피부 처짐 느낌을 기준으로 고르세요.",
+    q: "탄력·주름 고민은?",
+    options: [
+      { value: "W2", title: "잔주름과 탄력 저하가 뚜렷하다", desc: "눈가, 팔자, 입가가 특히 신경 쓰인다." },
+      { value: "W1", title: "건조 주름과 푸석함이 늘었다", desc: "윤기와 탱탱함이 예전 같지 않다." },
+      { value: "T1", title: "아직 주름은 큰 고민이 아니다", desc: "피지, 모공, 트러블 관리가 더 급하다." },
+      { value: "T2", title: "탄력은 비교적 괜찮은 편이다", desc: "노화 관리보다 컨디션 유지가 목표다." }
+    ]
+  },
+  {
+    axis: "aging",
+    title: "관리 목표",
+    hint: "지금 가장 바라는 피부 변화를 선택하세요.",
+    q: "스킨케어에서 가장 기대하는 변화는?",
+    options: [
+      { value: "W2", title: "탄력, 윤기, 잔주름 완화", desc: "피부가 얇아지고 힘이 빠진 느낌을 개선하고 싶다." },
+      { value: "W1", title: "속건조와 푸석함 개선", desc: "보습을 넘어 피부 밀도를 챙기고 싶다." },
+      { value: "T1", title: "피지 조절과 산뜻함", desc: "번들거림과 답답함을 줄이고 싶다." },
+      { value: "T2", title: "피부 컨디션 유지", desc: "큰 변화보다 안정적인 루틴을 원한다." }
+    ]
+  }
+];
+
+const AXIS_INFO = {
+  D: {
+    tag: "건조형",
+    summary: "수분과 유분을 붙잡는 힘이 부족해 당김, 들뜸, 푸석함이 쉽게 나타나는 피부입니다.",
+    ingredients: ["세라마이드", "히알루론산", "판테놀", "스쿠알란", "글리세린"],
+    avoid: ["강한 폼클렌징", "잦은 스크럽", "알코올 고함량 토너", "매트한 베이스 과사용"],
+    morning: ["순한 세안 또는 미온수 세안", "수분 토너를 손으로 눌러 흡수", "세라마이드·판테놀 크림", "촉촉한 제형의 자외선 차단제"],
+    evening: ["자극 적은 클렌징", "히알루론산 또는 판테놀 세럼", "장벽 크림", "건조한 날은 슬리핑팩"],
+    care: ["세안 직후 1분 안에 보습제를 바르면 수분 손실을 줄이는 데 도움이 됩니다.", "수분 세럼만 여러 겹 바르기보다 크림으로 마무리해 수분이 날아가지 않게 해주세요."]
+  },
+  O: {
+    tag: "유분형",
+    summary: "피지 분비가 많아 번들거림, 모공, 화장 무너짐이 쉽게 나타나는 피부입니다.",
+    ingredients: ["나이아신아마이드", "살리실산(BHA)", "아연 PCA", "녹차추출물", "가벼운 히알루론산"],
+    avoid: ["무거운 오일", "코코넛오일", "과한 유분 크림", "세정력 강한 클렌징 반복"],
+    morning: ["젤 타입 클렌저", "가벼운 진정 토너", "나이아신아마이드 세럼", "산뜻한 수분 로션과 선크림"],
+    evening: ["꼼꼼한 클렌징", "BHA는 주 2~3회부터", "수분 젤 또는 로션", "번들거리는 부위는 얇게 마무리"],
+    care: ["피지를 모두 말리려고 하면 오히려 장벽이 흔들리고 피지가 더 불안정해질 수 있습니다.", "오일프리 제품만 고집하기보다 막히지 않는 가벼운 보습을 유지해주세요."]
+  },
+  S: {
+    tag: "민감형",
+    summary: "붉어짐, 따가움, 화끈거림이 쉽게 생겨 성분과 사용 빈도를 신중히 조절해야 합니다.",
+    ingredients: ["시카", "판테놀", "알란토인", "베타글루칸", "마데카소사이드"],
+    avoid: ["향료", "에센셜오일", "강한 AHA/BHA", "고농도 레티놀", "잦은 제품 교체"],
+    morning: ["자극 적은 세안", "진정 세럼", "장벽 보습제", "무기자차 또는 저자극 선크림"],
+    evening: ["클렌징 시간을 짧게 유지", "진정 앰플", "크림으로 장벽 보호", "따가운 날은 기능성 제품 쉬기"],
+    care: ["새 제품은 얼굴 전체에 바로 바르지 말고 턱선이나 귀밑에 먼저 테스트하세요.", "민감한 시기에는 미백, 레티놀, 각질 관리를 동시에 진행하지 않는 것이 좋습니다."]
+  },
+  R: {
+    tag: "저항형",
+    summary: "피부가 비교적 안정적이고 자극 반응이 적어 기능성 루틴을 단계적으로 활용하기 좋습니다.",
+    ingredients: ["비타민C", "레티놀", "펩타이드", "나이아신아마이드", "AHA/PHA"],
+    avoid: ["기능성 제품 과다 레이어링", "매일 강한 각질 제거", "자외선 차단 생략"],
+    morning: ["피부 타입에 맞는 세안", "항산화 세럼", "가벼운 보습", "자외선 차단제"],
+    evening: ["클렌징", "레티놀 또는 산 성분은 번갈아 사용", "보습 크림", "피부 반응에 따라 빈도 조절"],
+    care: ["피부가 튼튼해도 강한 성분을 매일 겹쳐 쓰면 장벽이 무너질 수 있습니다.", "효과를 빨리 보려고 루틴을 급하게 늘리기보다 2~4주 단위로 조절하세요."]
+  },
+  P: {
+    tag: "색소형",
+    summary: "기미, 잡티, 여드름 자국, 칙칙함이 오래 남기 쉬워 차단과 브라이트닝이 핵심입니다.",
+    ingredients: ["비타민C", "나이아신아마이드", "트라넥사믹애씨드", "알부틴", "감초추출물"],
+    avoid: ["선크림 생략", "자극 후 방치", "강한 박피 반복", "레몬즙 등 민간요법"],
+    morning: ["항산화 세럼", "브라이트닝 성분", "보습", "SPF50+ 자외선 차단제 충분히"],
+    evening: ["클렌징", "나이아신아마이드 또는 트라넥사믹애씨드", "장벽 보습", "레티놀은 적응 후 추가"],
+    care: ["색소 관리는 자외선 차단이 절반 이상입니다. 흐린 날에도 선크림을 유지해주세요.", "자극이 누적되면 색소가 더 진해질 수 있어 진정과 장벽 관리를 함께 해야 합니다."]
+  },
+  N: {
+    tag: "맑음형",
+    summary: "색소 고민은 비교적 적고 피부결, 붉은기, 보습, 컨디션 유지가 더 중요한 피부입니다.",
+    ingredients: ["히알루론산", "펩타이드", "PHA", "녹차추출물", "세라마이드"],
+    avoid: ["불필요한 미백 제품 과다", "과한 톤업 제품", "자외선 차단 생략"],
+    morning: ["기본 보습", "피부결 세럼", "자외선 차단제", "필요 시 가벼운 톤 보정"],
+    evening: ["순한 클렌징", "PHA 또는 보습 세럼", "피부 타입별 크림", "충분한 수면"],
+    care: ["색소가 적어도 자외선 차단을 빼면 피부결과 탄력이 빠르게 떨어질 수 있습니다.", "피부가 맑은 편일수록 루틴을 복잡하게 만들기보다 컨디션 유지에 집중하세요."]
+  },
+  W: {
+    tag: "주름형",
+    summary: "잔주름, 탄력 저하, 윤기 부족이 주요 고민이라 항노화 성분과 보습 균형이 필요합니다.",
+    ingredients: ["레티놀", "펩타이드", "아데노신", "비타민C", "세라마이드"],
+    avoid: ["건조한 상태의 고농도 레티놀", "자외선 차단 생략", "눈가 마찰", "수면 부족"],
+    morning: ["항산화 세럼", "보습 크림", "눈가 보습", "자외선 차단제"],
+    evening: ["클렌징", "레티놀은 주 2~3회부터", "펩타이드 또는 아데노신", "영양 크림"],
+    care: ["레티놀은 많이 바르는 것보다 꾸준히 적응시키는 것이 중요합니다.", "눈가와 입가는 문지르지 말고 눌러 바르는 습관을 들이세요."]
+  },
+  T: {
+    tag: "탄탄형",
+    summary: "현재 탄력 저하는 크지 않아 기본 루틴 유지와 예방 관리가 잘 맞는 피부입니다.",
+    ingredients: ["항산화 성분", "나이아신아마이드", "펩타이드", "가벼운 보습제", "선크림"],
+    avoid: ["예방 관리 완전 생략", "과도한 피지 제거", "밤샘", "자외선 노출"],
+    morning: ["기본 세안", "항산화 또는 수분 세럼", "가벼운 보습", "자외선 차단제"],
+    evening: ["클렌징", "피부 고민별 세럼", "가벼운 크림", "주 1~2회 컨디션 관리"],
+    care: ["탄력이 괜찮을 때부터 자외선 차단과 항산화 루틴을 유지하면 노화 속도를 늦추는 데 도움이 됩니다.", "과한 안티에이징보다 꾸준한 보습과 수면 관리가 더 효율적일 수 있습니다."]
+  }
+};
+
+const TYPE_NAMES = {
+  DRPW:"건조·저항·색소·주름관리형", DRPT:"건조·저항·색소·탄탄형",
+  DRNW:"건조·저항·맑음·주름관리형", DRNT:"건조·저항·맑음·탄탄형",
+  DSPW:"건조·민감·색소·주름집중형", DSPT:"건조·민감·색소·탄탄형",
+  DSNW:"건조·민감·맑음·주름관리형", DSNT:"건조·민감·맑음·탄탄형",
+  ORPW:"유분·저항·색소·주름관리형", ORPT:"유분·저항·색소·탄탄형",
+  ORNW:"유분·저항·맑음·주름관리형", ORNT:"유분·저항·맑음·탄탄형",
+  OSPW:"유분·민감·색소·주름복합형", OSPT:"유분·민감·색소·탄탄형",
+  OSNW:"유분·민감·맑음·주름관리형", OSNT:"유분·민감·맑음·진정형"
+};
+
+let currentStep = 1;
+const answers = {};
+let copiedText = "";
+
+function startQuiz(){
+  document.getElementById("intro-section").style.display = "none";
+  document.getElementById("progress-wrap").style.display = "block";
+  document.getElementById("quiz-section").style.display = "block";
+  document.getElementById("nav-buttons").style.display = "flex";
+  currentStep = 1;
+  renderStep();
+}
+
+function renderStep(){
+  const data = QUESTIONS[currentStep - 1];
+  const stepEl = document.getElementById("step-1");
+  stepEl.classList.add("active");
+  stepEl.innerHTML = `
+    <div class="survey-section-title"><span class="step-num">${String(currentStep).padStart(2,"0")}</span>${data.title}</div>
+    <div class="question-hint">${data.hint}</div>
+    <div class="question-hint" style="background:#fff;border-left-color:var(--rose-mid);color:var(--brown);font-weight:500">${data.q}</div>
+    <div class="radio-group">
+      ${data.options.map((opt, idx) => `
+        <label class="radio-label">
+          <input type="radio" name="q${currentStep}" value="${opt.value}" ${answers["q"+currentStep] === opt.value ? "checked" : ""}>
+          <span class="radio-content">
+            <span class="btn-title">${idx + 1}. ${opt.title}</span>
+            <span class="btn-desc">${opt.desc}</span>
+          </span>
+        </label>
+      `).join("")}
+    </div>
+  `;
+
+  document.querySelectorAll(`input[name="q${currentStep}"]`).forEach(input => {
+    input.addEventListener("change", () => {
+      answers["q" + currentStep] = input.value;
+      document.getElementById("btn-next").disabled = false;
+    });
+  });
+
+  const pct = Math.round((currentStep - 1) / QUESTIONS.length * 100);
+  document.getElementById("progress-bar").style.width = pct + "%";
+  document.getElementById("progress-text").textContent = "Step " + currentStep + " / " + QUESTIONS.length;
+  document.getElementById("progress-pct").textContent = pct + "%";
+  document.getElementById("btn-prev").style.display = currentStep === 1 ? "none" : "block";
+  document.getElementById("btn-next").textContent = currentStep === QUESTIONS.length ? "결과 리포트 보기" : "다음";
+  document.getElementById("btn-next").disabled = !answers["q" + currentStep];
+}
+
+function nextStep(){
+  if (!answers["q" + currentStep]) return;
+  if (currentStep < QUESTIONS.length) {
+    currentStep++;
+    renderStep();
+  } else {
+    showResult();
+  }
+}
+
+function prevStep(){
+  if (currentStep > 1) {
+    currentStep--;
+    renderStep();
+  }
+}
+
+function scoreCode(){
+  const score = {D:0,O:0,S:0,R:0,P:0,N:0,W:0,T:0};
+  const weights = {
+    D2:["D",2], D1:["D",1], O1:["O",1], O2:["O",2],
+    S2:["S",2], S1:["S",1], R1:["R",1], R2:["R",2],
+    P2:["P",2], P1:["P",1], N1:["N",1], N2:["N",2],
+    W2:["W",2], W1:["W",1], T1:["T",1], T2:["T",2]
+  };
+  Object.values(answers).forEach(value => {
+    const item = weights[value];
+    if (item) score[item[0]] += item[1];
+  });
+  return (score.D >= score.O ? "D" : "O") +
+         (score.S >= score.R ? "S" : "R") +
+         (score.P >= score.N ? "P" : "N") +
+         (score.W >= score.T ? "W" : "T");
+}
+
+function unique(list){
+  return [...new Set(list)];
+}
+
+function chips(list){
+  return list.map(item => `<span class="chip">${item}</span>`).join("");
+}
+
+function listItems(list){
+  return list.map(item => `<div class="detail-item">${item}</div>`).join("");
+}
+
+function ordered(list){
+  return list.map(item => `<li>${item}</li>`).join("");
+}
+
+function buildCarePlan(axes){
+  const [oil, sens, pigment, aging] = axes;
+  const weekly = [];
+  if (oil === "D") weekly.push({title:"보습 강화", text:"주 2~3회 크림팩이나 슬리핑팩으로 건조한 부위의 수분 손실을 줄여주세요."});
+  if (oil === "O") weekly.push({title:"피지 정리", text:"BHA 또는 클레이 마스크는 주 1~2회부터 시작하고, 사용 후에는 가벼운 보습을 꼭 해주세요."});
+  if (sens === "S") weekly.push({title:"진정 루틴", text:"피부가 붉거나 따가운 주에는 미백·레티놀·각질 관리를 쉬고 진정과 보습만 유지하세요."});
+  if (sens === "R") weekly.push({title:"기능성 적응", text:"레티놀, 비타민C, 산 성분은 같은 날 겹치지 말고 요일을 나누면 부담이 줄어듭니다."});
+  if (pigment === "P") weekly.push({title:"브라이트닝", text:"자외선 차단제를 충분히 바르고, 비타민C나 나이아신아마이드는 아침 루틴에 꾸준히 사용하세요."});
+  if (aging === "W") weekly.push({title:"탄력 관리", text:"레티놀은 낮은 빈도부터 시작하고, 건조하거나 따가우면 보습제를 먼저 바른 뒤 사용하세요."});
+  if (aging === "T" && weekly.length < 4) weekly.push({title:"예방 관리", text:"현재 컨디션이 괜찮을수록 선크림, 수면, 기본 보습을 꾸준히 유지하는 것이 중요합니다."});
+  return weekly.slice(0, 4);
+}
+
+function showResult(){
+  const code = scoreCode();
+  const axes = code.split("");
+  const info = axes.map(axis => AXIS_INFO[axis]);
+  const typeName = TYPE_NAMES[code] || "균형 관리형";
+  const goodIngredients = unique(info.flatMap(item => item.ingredients)).slice(0, 12);
+  const badIngredients = unique(info.flatMap(item => item.avoid)).slice(0, 12);
+  const morning = unique(info.flatMap(item => item.morning)).slice(0, 8);
+  const evening = unique(info.flatMap(item => item.evening)).slice(0, 8);
+  const careDetails = unique(info.flatMap(item => item.care)).slice(0, 8);
+  const weekly = buildCarePlan(axes);
+  const tags = info.map(item => item.tag);
+
+  document.getElementById("progress-bar").style.width = "100%";
+  document.getElementById("progress-pct").textContent = "100%";
+  document.getElementById("quiz-section").style.display = "none";
+  document.getElementById("progress-wrap").style.display = "none";
+
+  copiedText = `[The Beauty Archive 피부타입 리포트]
+결과: ${code} (${typeName})
+특징: ${tags.join(" · ")}
+필요한 성분: ${goodIngredients.join(", ")}
+피해야 할 성분/습관: ${badIngredients.join(", ")}
+관리 포인트: ${careDetails.join(" / ")}`;
+
+  const result = document.getElementById("result-container");
+  result.style.display = "block";
+  result.innerHTML = `
+    <div class="report-card">
+      <div class="report-header">
+        <div class="report-tag">YOUR SKIN TYPE</div>
+        <div class="result-code">${code}</div>
+        <div class="report-title">${typeName}</div>
+        <div class="profile-tags">${tags.map(tag => `<span class="profile-tag">${tag}</span>`).join("")}</div>
+        <p class="result-summary">${info.map(item => item.summary).join(" ")}</p>
+      </div>
+
+      <div class="report-section">
+        <div class="section-head"><div class="section-label">INGREDIENT MATCH</div><div class="section-title">필요한 성분과 피해야 할 성분</div></div>
+        <div class="section-body ingredient-grid">
+          <div class="ingredient-box good">
+            <div class="ingredient-box-title">꼭 챙기면 좋은 성분</div>
+            <div class="chips">${chips(goodIngredients)}</div>
+          </div>
+          <div class="ingredient-box bad">
+            <div class="ingredient-box-title">주의하면 좋은 성분·습관</div>
+            <div class="chips">${chips(badIngredients)}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="section-head"><div class="section-label">WHY & HOW</div><div class="section-title">내 피부 관리 포인트</div></div>
+        <div class="section-body"><div class="detail-list">${listItems(careDetails.map(text => `<strong>관리 팁</strong> · ${text}`))}</div></div>
+      </div>
+
+      <div class="report-section">
+        <div class="section-head"><div class="section-label">DAILY ROUTINE</div><div class="section-title">아침·저녁 추천 루틴</div></div>
+        <div class="section-body routine-grid">
+          <div class="routine-box"><div class="routine-time">MORNING</div><ol>${ordered(morning)}</ol></div>
+          <div class="routine-box"><div class="routine-time">EVENING</div><ol>${ordered(evening)}</ol></div>
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="section-head"><div class="section-label">WEEKLY CARE</div><div class="section-title">주간 관리 플랜</div></div>
+        <div class="section-body care-grid">
+          ${weekly.map(item => `<div class="care-card"><div class="care-card-title">${item.title}</div><p>${item.text}</p></div>`).join("")}
+        </div>
+      </div>
+
+      <div class="report-section">
+        <div class="section-head"><div class="section-label">CLINIC NOTE</div><div class="section-title">피부과 상담 시 참고 포인트</div></div>
+        <div class="section-body">
+          <div class="caution-box">
+            갑작스러운 붉어짐, 통증, 부종, 가려움, 반복되는 염증이 있다면 단순 피부타입 문제가 아닐 수 있습니다.
+            기미·잡티가 빠르게 진해지거나 눈가·입가 염증이 반복될 때는 자가 관리보다 전문 상담을 먼저 권합니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-copy" type="button" onclick="copyReport()">결과 리포트 복사하기</button>
+        <button class="btn-reset" type="button" onclick="resetQuiz()">다시 검사하기</button>
+      </div>
+      <p class="footer-note">본 테스트는 일반적인 피부 관리 방향을 잡기 위한 참고용입니다. 질환, 알레르기, 염증 증상이 있으면 전문의 상담을 권합니다.</p>
+    </div>
+  `;
+  result.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function copyReport(){
+  if (!copiedText) return;
+  navigator.clipboard.writeText(copiedText)
+    .then(() => alert("피부타입 리포트가 복사되었습니다."))
+    .catch(() => alert(copiedText));
+}
+
+function resetQuiz(){
+  currentStep = 1;
+  Object.keys(answers).forEach(key => delete answers[key]);
+  document.getElementById("result-container").style.display = "none";
+  document.getElementById("intro-section").style.display = "block";
+  document.getElementById("quiz-section").style.display = "none";
+  document.getElementById("progress-wrap").style.display = "none";
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+</script>
+
+
+</body></html>
